@@ -65,7 +65,9 @@ jobs:
       # Build Docker Image from MLflow model
       - name: Build Docker Image using MLflow
         run: |
-          MODEL_URI="MLProject/mlruns/0/models/$(ls MLProject/mlruns/0/models | grep m- | sort | tail -1)/artifacts"
+          # Ambil run_id model terbaru dari folder models/
+          MODEL_RUN=$(ls MLProject/mlruns/0/models | grep m- | sort | tail -1)
+          MODEL_URI="MLProject/mlruns/0/models/$MODEL_RUN/artifacts/model"
           IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/mlflow-model:latest
           mlflow models build-docker -m $MODEL_URI -n mlflow-model
           docker tag mlflow-model $IMAGE_NAME
