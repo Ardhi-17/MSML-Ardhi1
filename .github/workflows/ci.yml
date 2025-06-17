@@ -28,6 +28,6 @@ jobs:
           pip install pandas numpy scikit-learn mlflow joblib matplotlib seaborn
 
       - name: Run MLflow Project
-        run: |
+        run: | 
           cd MLProject
           mlflow run .
