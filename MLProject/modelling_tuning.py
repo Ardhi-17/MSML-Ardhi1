@@ -1,6 +1,5 @@
 import argparse
 import mlflow
-import mlflow.sklearn
 import joblib
 import pandas as pd
 import numpy as np
@@ -26,6 +25,7 @@ for col in X.columns:
         if col.lower() in ['blood_pressure', 'bp', 'tekanan_darah']:
             # Split jadi dua kolom numerik
             X[['BP_sys', 'BP_dia']] = X[col].str.split('/', expand=True).astype(float)
+        # Jika kolom string lain, hapus (kecuali sudah numerik)
         else:
             X = X.drop(columns=[col])
 
@@ -41,14 +41,12 @@ with mlflow.start_run():
     # Train model
     model = RandomForestClassifier(random_state=42)
     model.fit(X_train, y_train)
-    # Save & log model as MLflow model (WAJIB untuk build-docker)
-    mlflow.sklearn.log_model(model, "model")  # <-- Tambahan WAJIB
-    # Save & log joblib model juga (opsional, bonus artefak manual)
+    # Save & log model
     joblib.dump(model, "model_sleep.joblib")
     mlflow.log_artifact("model_sleep.joblib")
-    print("[✓] Model trained & logged as MLflow model + joblib artifact.")
+    print("[✓] Model trained & logged as artifact.")
 
-    # Log metrics (optional)
+    # Optional: log metrics
     acc = model.score(X_test, y_test)
     mlflow.log_metric("test_accuracy", acc)
     print(f"[✓] Test Accuracy: {acc:.4f}")
