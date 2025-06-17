@@ -1,6 +1,7 @@
 import os
 import argparse
 import pandas as pd
+import numpy as np              # Penting untuk Scikit-learn class_weight
 import mlflow
 import mlflow.sklearn
 from sklearn.ensemble import RandomForestClassifier
@@ -9,12 +10,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 import joblib
 
-# --- Argument parsing (MLflow Project) ---
+# --- Argument parsing untuk MLflow Project ---
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
 args = parser.parse_args()
 
-# --- MLflow Experiment (boleh di-set, tapi JANGAN start_run()) ---
+# --- MLflow Experiment (boleh set, tapi JANGAN start_run()) ---
 mlflow.set_experiment("Sleep Disorder Tuning (CI)")
 mlflow.sklearn.autolog()
 
@@ -39,8 +40,8 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 joblib.dump(scaler, 'scaler_sleep.joblib')
 
-# --- Hitung class weight ---
-classes = sorted(y_train.unique())
+# --- Hitung class weight (PASTIKAN pakai np.unique untuk array) ---
+classes = np.unique(y_train)
 class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y_train)
 cw_dict = dict(zip(classes, class_weights))
 
