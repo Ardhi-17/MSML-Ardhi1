@@ -1,0 +1,9 @@
+name: sleep-disorder-pipeline
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      dataset: {type: str, default: "namadataset_preprocessing/Sleep_health_and_lifestyle_dataset_preprocessed.csv"}
+    command: >
+      python modelling_tuning.py --dataset {dataset}
