@@ -78,18 +78,17 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker Image using MLflow
         run: |
           MODEL_URI=$(ls -td MLProject/mlruns/0/* | head -1)/artifacts/model
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/mlflow-model:latest
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/mlflow-model:latest
           mlflow models build-docker -m $MODEL_URI -n mlflow-model
           docker tag mlflow-model $IMAGE_NAME
 
       - name: Push Docker Image to Docker Hub
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/mlflow-model:latest
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/mlflow-model:latest
           docker push $IMAGE_NAME
-
