@@ -5,4 +5,4 @@ entry_points:
     parameters:
       dataset: {type: str, default: "namadataset_preprocessing/Sleep_health_and_lifestyle_dataset_preprocessed.csv"}
     command: >
-      python modelling_tuning.py --dataset {dataset}
+      python3 modelling_tuning.py --dataset {dataset}
