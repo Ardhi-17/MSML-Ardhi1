@@ -3,12 +3,12 @@ name: Sleep Disorder CI
 on:
   push:
     paths:
-      - 'Workflow-CI/MLProject/**'
-      - 'Workflow-CI/.github/workflows/ci.yml'
+      - 'MLProject/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     paths:
-      - 'Workflow-CI/MLProject/**'
-      - 'Workflow-CI/.github/workflows/ci.yml'
+      - 'MLProject/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
   train-model:
