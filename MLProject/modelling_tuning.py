@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import mlflow
 import joblib
-from dagshub import dagshub_logger
 import dagshub
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -11,8 +10,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, f1_score
 
-# Inisialisasi dagshub (ganti <username> dan <repo_name> sesuai punyamu)
-dagshub.init(repo_owner='Ardhi-17', repo_name='my-first-repo', mlflow=True)
 mlflow.set_experiment("Sleep Disorder Tuning DagsHub")
 
 # Load dataset
