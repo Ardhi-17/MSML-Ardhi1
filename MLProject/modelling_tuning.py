@@ -2,25 +2,18 @@ import argparse
 import mlflow
 import joblib
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Argparse
+# Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', required=True)
 args = parser.parse_args()
 
 # Load data
 df = pd.read_csv(args.dataset)
-
-# Drop kolom yang tidak numerik
-# Kamu bisa ubah sesuai kolom yang ada
-drop_cols = ['Blood Pressure', 'Occupation', 'Gender', 'BMI Category']  # tambah jika perlu
-for col in drop_cols:
-    if col in df.columns:
-        df = df.drop(columns=[col])
-
-# Pisahkan fitur & target
 X = df.drop(columns=["Sleep Disorder"])
 y = df["Sleep Disorder"]
 
@@ -36,4 +29,14 @@ with mlflow.start_run():
     # Save & log model
     joblib.dump(model, "model_sleep.joblib")
     mlflow.log_artifact("model_sleep.joblib")
-    print("[✓] Model trained & logged as artifact.")
+    
+    # Generate & log confusion matrix
+    y_pred = model.predict(X_test)
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot()
+    plt.savefig("conf_matrix.png")
+    plt.close()
+    mlflow.log_artifact("conf_matrix.png")
+    
+    print("[✓] Model trained, logged, and confusion matrix saved.")
