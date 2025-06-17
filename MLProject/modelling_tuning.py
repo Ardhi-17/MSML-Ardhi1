@@ -5,13 +5,22 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-# Parsing argumen
+# Argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', required=True)
 args = parser.parse_args()
 
 # Load data
 df = pd.read_csv(args.dataset)
+
+# Drop kolom yang tidak numerik
+# Kamu bisa ubah sesuai kolom yang ada
+drop_cols = ['Blood Pressure', 'Occupation', 'Gender', 'BMI Category']  # tambah jika perlu
+for col in drop_cols:
+    if col in df.columns:
+        df = df.drop(columns=[col])
+
+# Pisahkan fitur & target
 X = df.drop(columns=["Sleep Disorder"])
 y = df["Sleep Disorder"]
 
