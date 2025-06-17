@@ -2,22 +2,37 @@ import argparse
 import mlflow
 import joblib
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
-# Parse arguments
+# --- Parsing argumen dari MLProject/CI/CD
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', required=True)
 args = parser.parse_args()
 
-# Load data
+# --- Load data
 df = pd.read_csv(args.dataset)
+
+# --- Pastikan semua kolom input numerik ---
 X = df.drop(columns=["Sleep Disorder"])
 y = df["Sleep Disorder"]
 
-# Split data
+# Tangani kolom string (misal, 'Blood_Pressure' dengan format 130/85)
+for col in X.columns:
+    if X[col].dtype == object:
+        # Deteksi kolom tekanan darah / blood pressure
+        if col.lower() in ['blood_pressure', 'bp', 'tekanan_darah']:
+            # Split jadi dua kolom numerik
+            X[['BP_sys', 'BP_dia']] = X[col].str.split('/', expand=True).astype(float)
+        # Jika kolom string lain, hapus (kecuali sudah numerik)
+        else:
+            X = X.drop(columns=[col])
+
+# Pastikan hanya numerik
+X = X.select_dtypes(include=[np.number])
+
+# --- Split train-test
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=42
 )
@@ -29,14 +44,9 @@ with mlflow.start_run():
     # Save & log model
     joblib.dump(model, "model_sleep.joblib")
     mlflow.log_artifact("model_sleep.joblib")
-    
-    # Generate & log confusion matrix
-    y_pred = model.predict(X_test)
-    cm = confusion_matrix(y_test, y_pred)
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-    disp.plot()
-    plt.savefig("conf_matrix.png")
-    plt.close()
-    mlflow.log_artifact("conf_matrix.png")
-    
-    print("[✓] Model trained, logged, and confusion matrix saved.")
+    print("[✓] Model trained & logged as artifact.")
+
+    # Optional: log metrics
+    acc = model.score(X_test, y_test)
+    mlflow.log_metric("test_accuracy", acc)
+    print(f"[✓] Test Accuracy: {acc:.4f}")
