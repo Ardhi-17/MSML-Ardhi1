@@ -2,7 +2,7 @@ name: CI/CD MLflow
 
 on:
   push:
-    branches:
+    branches: 
       - main
     paths-ignore:
       - 'mlruns/**'
