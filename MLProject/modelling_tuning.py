@@ -1,7 +1,6 @@
-import os
 import argparse
 import pandas as pd
-import numpy as np              # Penting untuk Scikit-learn class_weight
+import numpy as np
 import mlflow
 import mlflow.sklearn
 from sklearn.ensemble import RandomForestClassifier
@@ -15,8 +14,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, required=True)
 args = parser.parse_args()
 
-# --- MLflow Experiment (boleh set, tapi JANGAN start_run()) ---
+# --- (Opsional) Set experiment name, tidak start_run! ---
 mlflow.set_experiment("Sleep Disorder Tuning (CI)")
+
+# --- Aktifkan autolog, supaya model, params, dsb otomatis ke mlruns/0 ---
 mlflow.sklearn.autolog()
 
 # --- Load dataset ---
@@ -38,9 +39,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
-joblib.dump(scaler, 'scaler_sleep.joblib')
+joblib.dump(scaler, 'scaler_sleep.joblib')  # bisa juga log manual jika mau
 
-# --- Hitung class weight (PASTIKAN pakai np.unique untuk array) ---
+# --- Hitung class weight (dengan np.unique) ---
 classes = np.unique(y_train)
 class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y_train)
 cw_dict = dict(zip(classes, class_weights))
@@ -58,11 +59,11 @@ rf = RandomForestClassifier(
 search = GridSearchCV(rf, param_grid, scoring='accuracy', n_jobs=-1, cv=3, verbose=2)
 search.fit(X_train_scaled, y_train)
 
-# --- Save best model & log manual artifact tambahan ---
+# --- Save best model & scaler secara manual (opsional) ---
 best_model = search.best_estimator_
 joblib.dump(best_model, 'model_sleep_tuned.joblib')
 
-# --- MLflow manual log (opsional, autolog tetap aktif) ---
+# --- Log params & metric best secara manual (autolog tetap jalan) ---
 mlflow.log_params(search.best_params_)
 mlflow.log_metric("best_cv_score", search.best_score_)
 
