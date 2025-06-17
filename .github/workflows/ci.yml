@@ -27,7 +27,7 @@ jobs:
           pip install --upgrade pip
           pip install pandas numpy scikit-learn mlflow joblib matplotlib seaborn
 
-      - name: Run MLflow Project
-        run: | 
+      - name: Run MLflow project
+        run: |
           cd MLProject
-          mlflow run .
+          mlflow run . --env-manager=local
