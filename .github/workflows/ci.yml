@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 env:
-  MODEL_NAME: "cc"
+  DATASET: "MLProject/namadataset_preprocessing/Sleep_health_and_lifestyle_dataset_preprocessed.csv"
+  MODEL_NAME: "sleep_disorder_model"
 
 jobs:
   build-and-push-docker:
@@ -30,27 +31,12 @@ jobs:
           cd MLProject
           mlflow run . --env-manager=local
 
-      - name: Debug list mlruns
-        run: |
-          cd MLProject
-          echo "Cek isi MLProject:"
-          ls -lh
-          echo "Cek isi mlruns:"
-          ls -lh mlruns
-          echo "Cek isi mlruns/0:"
-          ls -lh mlruns/0 || true
-
       - name: Get latest MLflow run_id
         run: |
           cd MLProject
-          echo "ISI mlruns/0:"
-          ls -lh mlruns/0
           RUN_ID=$(ls -td mlruns/0/*/ | head -n 1 | cut -d'/' -f3)
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "RUN_ID = $RUN_ID"
-          echo "Cek isi model:"
-          ls -lh mlruns/0/$RUN_ID/model || true
-          cat mlruns/0/$RUN_ID/model/MLmodel || true
+          echo "Latest run_id: $RUN_ID"
 
       - name: Build Docker Model
         run: |
