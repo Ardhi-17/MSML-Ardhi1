@@ -5,7 +5,7 @@ on:
     paths:
       - 'MLProject/**'
       - '.github/workflows/ci.yml'
-  pull_request:
+  pull_request: 
     paths:
       - 'MLProject/**'
       - '.github/workflows/ci.yml'
