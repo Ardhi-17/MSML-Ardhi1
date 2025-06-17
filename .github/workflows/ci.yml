@@ -16,13 +16,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout with PAT
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          lfs: true
 
       - name: Set up Python 3.12.7
         uses: actions/setup-python@v4
         with:
           python-version: "3.12.7"
+
+      - name: Check Env
+        run: |
+          echo "Workflow path: $GITHUB_WORKSPACE"
 
       - name: Install dependencies
         run: |
@@ -36,7 +43,27 @@ jobs:
 
       - name: Get latest MLflow run_id
         run: |
-          cd MLProject
-          RUN_ID=$(ls -td mlruns/0/*/ | head -n 1 | cut -d'/' -f3)
+          RUN_ID=$(ls -td MLProject/mlruns/0/*/ | head -n 1 | cut -d'/' -f4)
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
           echo "Latest run_id: $RUN_ID"
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Track mlruns/ with Git LFS
+        run: |
+          git lfs track "MLProject/mlruns/**"
+          git add .gitattributes
+          git commit -m "Track mlruns folder" || true
+
+      - name: Add & Commit mlruns
+        run: |
+          git add -f MLProject/mlruns/
+          git commit -m "Add mlruns artifacts from CI" || true
+
+      - name: Push mlruns to repo
+        run: |
+          git push origin main
