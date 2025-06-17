@@ -61,7 +61,10 @@ jobs:
       - name: Add & Commit mlruns
         run: |
           git add -f MLProject/mlruns/
+          git status
+          ls -R MLProject/mlruns/
           git commit -m "Add mlruns artifacts from CI" || true
+
 
       - name: Push mlruns to repo
         run: |
