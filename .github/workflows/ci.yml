@@ -38,7 +38,7 @@ jobs:
       - name: Run MLflow Project
         run: |
           cd MLProject
-          mlflow run . --env-manager=conda --entry-point main
+          conda run -n sleep-disorder-pipeline mlflow run . --env-manager=conda --entry-point main
 
       - name: Install Git LFS
         run: |
