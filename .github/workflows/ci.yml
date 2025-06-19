@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: CI/CD MLflow Sleep-Disorder Pipeline
 
 on:
@@ -27,7 +28,7 @@ jobs:
         with:
           python-version: '3.12.7'
           environment-file: 'MLProject/conda.yaml'
-          activate-environment: sleep-disorder-pipeline
+          activate-environment: 'sleep-disorder-pipeline'
           auto-activate-base: false
 
       - name: Verify Conda environment
@@ -65,7 +66,7 @@ jobs:
           MODEL_DIR="$(ls MLProject/mlruns/0/models | grep m- | sort | tail -n1)"
           MODEL_URI="MLProject/mlruns/0/models/${MODEL_DIR}/artifacts"
           IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/mlflow-model:latest"
-          mlflow models build-docker -m $MODEL_URI -n mlflow-model
+          conda run -n sleep-disorder-pipeline mlflow models build-docker -m $MODEL_URI -n mlflow-model
           docker tag mlflow-model $IMAGE_NAME
 
       - name: Docker Hub login
