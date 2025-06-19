@@ -1,9 +1,10 @@
 name: sleep-disorder-pipeline
 
-conda_env: ../conda.yaml   # relatif dari dalam MLProject
+conda_env: conda.yaml   # MLflow akan cari MLProject/conda.yaml
+
 entry_points:
   main:
     parameters:
-      dataset: {type: str, default: "namadataset_preprocessing/Sleep_health_and_lifestyle_dataset_preprocessed.csv"}
+      dataset: { type: str, default: "namadataset_preprocessing/Sleep_health_and_lifestyle_dataset_preprocessed.csv" }
     command: >
-      python3 ../modelling_tuning.py --dataset {dataset}
+      python3 modelling_tuning.py --dataset {dataset}
