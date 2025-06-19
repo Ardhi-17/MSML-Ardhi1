@@ -75,7 +75,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Push Docker image
+      - name: Push Docker image 
         run: |
           IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/mlflow-model:latest"
           docker push $IMAGE_NAME
