@@ -6,7 +6,7 @@ on:
       - main
     paths-ignore:
       - 'mlruns/**'
-      - '.gitattributes'
+      - '.gitattributes' 
   pull_request:
     branches:
       - main 
